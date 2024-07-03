@@ -1,16 +1,16 @@
-import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
-// import { routes } from 'vue-router/auto-routes'
-import App from './App.vue'
-import './styles/main.scss'
+import app from '@/app';
+import router from '@/router';
+import { Icon } from '@iconify/vue';
+import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+import './styles/main.scss';
 
-// const routes = setupLayouts(generatedRoutes)
-
-const app = createApp(App)
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  extendRoutes: routes => setupLayouts(routes),
-})
-app.use(router)
-app.mount('#app')
+app.use(router);
+app.component('Icon', Icon);
+app.use(
+  Vue3Toasity,
+  {
+    autoClose: 3000
+  } as ToastContainerOptions
+);
+app.mount('#app');

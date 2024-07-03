@@ -4,6 +4,7 @@ const emits = defineEmits<{
 }>();
 
 const { pageListMock } = useApplyPermissions();
+const { getAll } = useUserGroups();
 const { searchTerm, searchListRef, selectedItems, searchItemsList, removeItem } = useListUtils(pageListMock, 'title');
 const currentPage = ref(1);
 const totalRecords = ref(98);
@@ -12,11 +13,11 @@ const totalPages = computed(() => {
   return Math.ceil(totalRecords.value / perPage.value);
 });
 
-function onPageChange(page) {
+function onPageChange(page: any) {
   currentPage.value = page;
 }
 
-function onPerPageChange(val) {
+function onPerPageChange(val: any) {
   currentPage.value = 1;
   perPage.value = val;
 }
@@ -25,6 +26,11 @@ watchEffect(() => {
   if (selectedItems.value) {
     emits('listUpdate', selectedItems.value);
   }
+});
+
+onMounted(async () => {
+  const data = await getAll({});
+  console.log('all-users', data);
 });
 </script>
 

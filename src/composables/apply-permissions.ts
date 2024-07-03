@@ -1,5 +1,5 @@
 import { toRef } from 'vue'
-import { groupData, pageData } from '~/mocks'
+import { groupData, pageData } from '@/mocks'
 
 export function useApplyPermissions() {
   const pageListMock = toRef(pageData)

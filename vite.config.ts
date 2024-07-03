@@ -1,6 +1,4 @@
-/// <reference types="vitest" />
-
-import path from 'node:path';
+import { URL, fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import Vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
@@ -12,9 +10,9 @@ import Layouts from 'vite-plugin-vue-layouts';
 
 export default defineConfig({
   resolve: {
-    alias: {
-      '~/': `${path.resolve(__dirname, 'src')}/`
-    }
+    alias: [
+      { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) }
+    ]
   },
   plugins: [
     VueMacros({
@@ -62,10 +60,5 @@ export default defineConfig({
       directoryAsNamespace: true,
       deep: true
     })
-  ],
-
-  // https://github.com/vitest-dev/vitest
-  test: {
-    environment: 'jsdom'
-  }
+  ]
 });

@@ -6,6 +6,12 @@
 @import './_partials/transitions';
 @import './_partials/checkbox-radio';
 
+@import './nprogress.scss';
+
+:root {
+  --toastify-color-progress-light: #e20074;
+}
+
 html,
 body,
 #app {
