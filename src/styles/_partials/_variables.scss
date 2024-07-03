@@ -1,0 +1,6 @@
+@use 'sass:color';
+
+$brand: #e20074;
+$brand_dark: color.adjust($brand, $lightness: -10%, $saturation: 10%);;
+$black: #1a1a1a;
+$white: #ffffff;

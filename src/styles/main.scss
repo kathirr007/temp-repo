@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './_partials/variables';
+@import './_partials/transitions';
+@import './_partials/checkbox-radio';
+
 html,
 body,
 #app {

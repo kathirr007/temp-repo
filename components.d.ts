@@ -7,6 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Accordion: typeof import('./src/components/Accordion.vue')['default']
+    AddGroups: typeof import('./src/components/AddGroups.vue')['default']
+    AddPages: typeof import('./src/components/AddPages.vue')['default']
+    AddUsers: typeof import('./src/components/AddUsers.vue')['default']
+    ApplyPermissions: typeof import('./src/components/ApplyPermissions.vue')['default']
+    copy: typeof import('./src/components/AddUsers copy.vue')['default']
+    Pagination: typeof import('./src/components/common/Pagination.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheCounter: typeof import('./src/components/TheCounter.vue')['default']
