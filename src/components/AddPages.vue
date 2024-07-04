@@ -24,7 +24,7 @@ const people = ref([
   }
 ]);
 
-const { pageListMock } = useApplyPermissions();
+const { pageListMock } = usePagePermissions();
 const { searchTerm, searchListRef, selectedItems, searchItemsList, removeItem } = useListUtils(pageListMock, 'title');
 const currentPage = ref(1);
 const totalRecords = ref(98);
@@ -128,18 +128,6 @@ watchEffect(() => {
       <CommonPagination :total-pages="totalPages" :total="totalRecords" :per-page="perPage" :current-page="currentPage" @change="onPageChange" @per-page-change="onPerPageChange" />
 
       <CommonDatatable :table-data="people" checkbox-value-field="email" />
-      <!-- <vue3-datatable
-        :rows="rows"
-        :columns="cols"
-        :loading="loading"
-        :total-rows="total_rows"
-        :is-server-mode="true"
-        :page-size="params.pagesize"
-        :sortable="true"
-        :sort-column="params.sort_column"
-        :sort-direction="params.sort_direction"
-        @change="changeServer"
-      /> -->
     </div>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 
-const { groupListMock, pageListMock } = useApplyPermissions();
+const { groupListMock, pageListMock } = usePagePermissions();
 
 const { searchTerm, searchListRef, selectedItems, searchItemsList, removeItem, addItem } = useListUtils(groupListMock, 'name');
 </script>

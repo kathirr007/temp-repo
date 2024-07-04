@@ -42,7 +42,6 @@ const {
     }
     return null;
   }
-
 });
 
 function handleTableChange(e: any) {
@@ -78,7 +77,6 @@ function handleTableChange(e: any) {
     :sort-column="params.sort_column"
     :sort-direction="params.sort_direction"
     @change="handleTableChange"
-    @sort-change="handleSortChange"
   />
   <main class="p-8 main-wrapper">
     <section class="pages mb-4 p-4">
