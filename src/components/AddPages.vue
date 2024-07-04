@@ -3,8 +3,28 @@ const emits = defineEmits<{
   (e: 'listUpdate', value: Record<string, any>[]): void;
 }>();
 
+const people = ref([
+  {
+    name: 'Lindsay Walton',
+    title: 'Front-end Developer',
+    email: 'lindsay.walton@example.com',
+    role: 'Member'
+  },
+  {
+    name: 'Lindsay Walton 2',
+    title: 'Front-end Developer',
+    email: 'lindsay.walton-2@example.com',
+    role: 'Member'
+  },
+  {
+    name: 'Lindsay Walton 3',
+    title: 'Front-end Developer',
+    email: 'lindsay.walton-3@example.com',
+    role: 'Member'
+  }
+]);
+
 const { pageListMock } = useApplyPermissions();
-const { getAll } = useUserGroups();
 const { searchTerm, searchListRef, selectedItems, searchItemsList, removeItem } = useListUtils(pageListMock, 'title');
 const currentPage = ref(1);
 const totalRecords = ref(98);
@@ -26,11 +46,6 @@ watchEffect(() => {
   if (selectedItems.value) {
     emits('listUpdate', selectedItems.value);
   }
-});
-
-onMounted(async () => {
-  const data = await getAll({});
-  console.log('all-users', data);
 });
 </script>
 
@@ -112,7 +127,19 @@ onMounted(async () => {
 
       <CommonPagination :total-pages="totalPages" :total="totalRecords" :per-page="perPage" :current-page="currentPage" @change="onPageChange" @per-page-change="onPerPageChange" />
 
-      <CommonDatatable />
+      <CommonDatatable :table-data="people" checkbox-value-field="email" />
+      <!-- <vue3-datatable
+        :rows="rows"
+        :columns="cols"
+        :loading="loading"
+        :total-rows="total_rows"
+        :is-server-mode="true"
+        :page-size="params.pagesize"
+        :sortable="true"
+        :sort-column="params.sort_column"
+        :sort-direction="params.sort_direction"
+        @change="changeServer"
+      /> -->
     </div>
   </div>
 </template>

@@ -1,83 +1,123 @@
-<script setup>
+<script setup lang="ts">
+import type { ColHeaders } from '@/types/datatable.type';
 import { computed, ref } from 'vue';
 
-const people = [
+const props = defineProps<{
+  tableData: Record<string, any>[];
+  checkbox?: boolean;
+  checkboxValueField?: string;
+}>();
+
+const emits = defineEmits<{
+  (e: 'items-selected', value: Record<string, any>[]): void;
+}>();
+
+const colHeaders: ColHeaders[] = [
   {
-    name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton@example.com',
-    role: 'Member'
+    fieldName: 'Name',
+    attrs: {
+      class: 'test-class'
+    }
   },
   {
-    name: 'Lindsay Walton 2',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton-2@example.com',
-    role: 'Member'
+    fieldName: 'Title',
+    attrs: {
+      class: 'test-class-2'
+    }
   },
   {
-    name: 'Lindsay Walton 3',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton-3@example.com',
-    role: 'Member'
+    fieldName: 'Email',
+    attrs: {
+      class: 'test-class-3'
+    }
+  },
+  {
+    fieldName: 'Role',
+    attrs: {
+      class: 'test-class-4'
+    }
+  },
+  {
+    fieldName: 'Edit',
+    colType: 'action',
+    hideHeaderCol: true,
+    attrs: {
+      class: 'test-class-4'
+    }
   }
 ];
 
-const selectedPeople = ref([]);
-const indeterminate = computed(() => selectedPeople.value.length > 0 && selectedPeople.value.length < people.length);
+const selectedItems = ref<any[]>([]);
+const indeterminate = computed(() => selectedItems.value.length > 0 && selectedItems.value.length < props.tableData.length);
+
+watchEffect(() => {
+  if (selectedItems.value) {
+    emits('items-selected', selectedItems.value);
+  }
+});
 </script>
 
 <template>
   <div class="">
     <div class="mt-8 flow-root">
+      <slot name="header" />
       <div class="ml-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="relative">
             <table class="min-w-full table-fixed divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <th scope="col" class="relative px-4 sm:w-6 sm:px-3">
-                    <input type="checkbox" class="absolute top-1/2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" :checked="selectedPeople.length === people.length" :indeterminate="indeterminate" @change="selectedPeople = $event.target.checked ? people.map((p) => p.email) : []">
+                  <th v-if="checkbox" scope="col" class="relative px-4 sm:w-6 sm:px-3">
+                    <input
+                      type="checkbox"
+                      class="absolute top-1/2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      :checked="selectedItems.length === tableData.length" :indeterminate="indeterminate"
+                      @change="selectedItems = ($event.target as HTMLInputElement).checked ? tableData.map((t) => checkboxValueField ? t[checkboxValueField as string] : t) : []"
+                    >
                   </th>
-                  <th scope="col" class="min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
-                    Name
-                  </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Title
-                  </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Email
-                  </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Role
-                  </th>
-                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                    <span class="sr-only">Edit</span>
-                  </th>
+                  <template v-for="(item, index) in colHeaders" :key="index">
+                    <th
+                      scope="col" :data-index="index"
+                      class="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900" :class="[{ 'pl-3': !checkbox && index === 0 }]" v-bind="item.attrs"
+                    >
+                      <span :class="{ 'sr-only': item.hideHeaderCol }">{{ item.fieldName }}</span>
+                    </th>
+                  </template>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
-                <tr v-for="person in people" :key="person.email" :class="[selectedPeople.includes(person.email) && 'bg-gray-50']">
-                  <td class="relative px-4 sm:w-6 sm:px-3">
-                    <!-- <div v-if="selectedPeople.includes(person.email)" class="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" /> -->
+                <tr
+                  v-for="item in tableData" :key="item.email"
+                  :class="[selectedItems.includes(item[checkboxValueField as string]) && 'bg-gray-50']"
+                >
+                  <td v-if="checkbox" class="relative px-4 sm:w-6 sm:px-3">
+                    <!-- <div v-if="selectedItems.includes(item.email)" class="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" /> -->
                     <div class="mt-2">
-                      <input v-model="selectedPeople" type="checkbox" class="absolute  top-1/2 mt-3 h-4 w-4 rounded border-gray-300 " :value="person.email">
+                      <input
+                        v-model="selectedItems" type="checkbox"
+                        class="absolute  top-1/2 mt-3 h-4 w-4 rounded border-gray-300 "
+                        :value="item[checkboxValueField as string]"
+                      >
                     </div>
                   </td>
-                  <td class="whitespace-nowrap py-4 pr-3 text-sm font-medium" :class="[selectedPeople.includes(person.email) ? 'text-indigo-600' : 'text-gray-900']">
-                    {{ person.name }}
+                  <td
+                    class="whitespace-nowrap py-4 pr-3 text-sm font-medium"
+                    :class="[selectedItems.includes(item[checkboxValueField as string]) ? 'text-pink-600' : 'text-gray-900', { 'pl-3': !checkbox }]"
+                  >
+                    {{ item.name }}
                   </td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {{ person.title }}
+                  <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
+                    {{ item.title }}
                   </td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {{ person.email }}
+                  <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
+                    {{ item.email }}
                   </td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {{ person.role }}
+                  <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
+                    {{ item.role }}
                   </td>
                   <td class="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                     <a href="#" class="text-indigo-600 hover:text-indigo-900">
-                      Edit<span class="sr-only">, {{ person.name }}</span>
+                      Edit<span class="sr-only">, {{ item.name }}</span>
                     </a>
                   </td>
                 </tr>

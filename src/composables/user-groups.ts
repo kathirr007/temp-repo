@@ -1,7 +1,7 @@
 import $api from '@/plugins/api';
 
-export function useUserGroups(id: string) {
-  const baseUrl = 'https://jsonplaceholder.typicode.com/user';
+export function useUserGroups() {
+  const baseUrl = 'https://jsonplaceholder.typicode.com';
 
   const getAll = async ({
     page,
