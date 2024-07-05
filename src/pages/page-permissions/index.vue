@@ -85,8 +85,7 @@ function changeServer(data: PaginationParams) {
         :page-size="params.pagesize"
         :search="params.search"
         :pagination="true"
-        :column-filter="true"
-        class="custom-bh-table hide-pagination column-filter"
+        class="custom-bh-table hide-pagination"
         row-class="bg-white"
         cell-class="bg-white border-y border-gray-200"
 
@@ -115,6 +114,9 @@ function changeServer(data: PaginationParams) {
 
 <style lang="scss" scoped>
 :deep(.custom-bh-table) {
+  thead th {
+    background-color: white;
+  }
   &.hide-pagination {
     .bh-pagination {
       display: none;
