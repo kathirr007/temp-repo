@@ -1,21 +1,13 @@
 <script setup lang="ts" generic="T extends any, O extends any">
+import type { PaginationParams } from '@/types/common.type';
+import type Vue3Datatable from '@bhplugin/vue3-datatable';
 import { useQuery } from '@tanstack/vue-query';
 
 defineOptions({
   name: 'PermissionsListPage'
 });
 
-const params = reactive({
-  current_page: 1,
-  pagesize: 10,
-  search: '',
-  column_filters: []
-});
-
-// const rows: any = ref(null);
-// const loading: any = ref(true);
-// const total_rows = ref(0);
-
+const datableRef = ref<InstanceType<typeof Vue3Datatable> | null>(null);
 const cols = ref([
   { field: 'uri_pattern', title: 'Page URL', type: 'string' },
   { field: 'view_id', title: 'Page ID', type: 'string' },
@@ -25,6 +17,7 @@ const cols = ref([
 
 // const queryClient = useQueryClient();
 const { getPages } = usePagePermissions(true);
+const { params } = usePagination({});
 
 const {
   data: pagesListData,
@@ -43,26 +36,16 @@ const {
   }
 });
 
-let timer: any;
-function filterUsers() {
-  clearTimeout(timer);
-  timer = setTimeout(() => {
-    // getUsers();
-    getPages({});
-    // queryClient.invalidateQueries({queryKey: ['get-pages']})
-  }, 300);
-}
+const searchData = useDebounceFn(() => {
+  console.log('search event...');
+  getPages({});
+}, 1000);
 
-function changeServer(data: any) {
-  console.log('changed...');
-
-  params.current_page = data.current_page;
-  params.pagesize = data.pagesize;
-  params.column_filters = data.column_filters;
-  params.search = data.search;
+function changeServer(data: PaginationParams) {
+  console.log('changed...', data);
 
   if (data.change_type === 'search') {
-    filterUsers();
+    searchData();
   }
   else {
     getPages({});
@@ -85,32 +68,57 @@ function changeServer(data: any) {
   </header>
   <main class="main-wrapper p-8">
     <div class="mb-5">
-      <input v-model="params.search" type="text" class="form-input max-w-xs" placeholder="Search...">
+      <input v-model="params.search" type="search" class="form-input max-w-xs border border-gray-400 rounded-md p-1 px-2.5 w-2/5" placeholder="Search...">
     </div>
 
-    <vue3-datatable
-      :rows="pagesListData || []"
-      :columns="cols"
-      :loading="loadingPagesListData || fetchingPagesListData"
-      :total-rows="pagesListData?.length"
-      :is-server-mode="true"
-      :page-size="params.pagesize"
-      :search="params.search"
-      @change="changeServer"
-    >
-      <template #action="data">
-        <div class="text-right">
-          <router-link
-            :to="{ name: '/page-permissions/[id]/',
-                   params: { id: data.value.view_id },
-            }"
-          >
-            <button type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-              Manage
-            </button>
-          </router-link>
-        </div>
+    <div class="p-3 shadow-md rounded-md border-1 border border-gray-200">
+      <vue3-datatable
+        ref="datableRef"
+        :rows="pagesListData || []"
+        :columns="cols"
+        :loading="loadingPagesListData || fetchingPagesListData"
+        :total-rows="pagesListData?.length"
+        :is-server-mode="true"
+        :show-first-page="false"
+        :show-last-page="false"
+        :page="params.current_page"
+        :page-size="params.pagesize"
+        :search="params.search"
+        :pagination="true"
+        :column-filter="true"
+        class="custom-bh-table hide-pagination column-filter"
+        row-class="bg-white"
+        cell-class="bg-white border-y border-gray-200"
+
+        @change="changeServer"
+      >
+        <template #action="data">
+          <div class="text-right">
+            <router-link
+              :to="{ name: '/page-permissions/[id]/',
+                     params: { id: data.value.view_id },
+              }"
+            >
+              <button type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                Manage
+              </button>
+            </router-link>
+          </div>
+        </template>
+      </vue3-datatable>
+      <template v-if="pagesListData">
+        <CommonPagination :total-records="pagesListData?.length" :per-page="10" :current-page="params.current_page" pagination-type="simple" @change:simple="changeServer" />
       </template>
-    </vue3-datatable>
+    </div>
   </main>
 </template>
+
+<style lang="scss" scoped>
+:deep(.custom-bh-table) {
+  &.hide-pagination {
+    .bh-pagination {
+      display: none;
+    }
+  }
+}
+</style>

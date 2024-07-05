@@ -31,6 +31,7 @@
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue-macros/volar": "^0.19.1",
     "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.5.1",
     "@vueuse/integrations": "^10.11.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.6.0",

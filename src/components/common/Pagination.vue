@@ -1,48 +1,45 @@
-<script setup>
+<script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import type { PaginationParams } from '@/types/common.type';
 
-const props = defineProps({
-  maxVisibleButtons: {
-    type: Number,
-    required: false,
-    default: 3
-  },
-  totalPages: {
-    type: Number,
-    required: true
-  },
-  total: {
-    type: Number,
-    required: true
-  },
-  perPage: {
-    type: Number,
-    required: true
-  },
-  currentPage: {
-    type: Number,
-    required: true
-  }
+const props = withDefaults(defineProps<{
+  totalRecords: number;
+  maxVisibleButtons?: number;
+  perPage: number;
+  currentPage: number;
+  paginationType: 'simple' | 'advanced';
+}>(), {
+  maxVisibleButtons: 3,
+  perPage: 10,
+  currentPage: 1,
+  paginationType: 'advanced'
 });
 
-const emits = defineEmits(['change', 'perPageChange']);
+// const emits = defineEmits(['change', 'perPageChange']);
+const emits = defineEmits<{
+  (e: 'change', value: number): void;
+  (e: 'perPageChange', value: number): void;
+  (e: 'change:simple', value: PaginationParams): void;
+}>();
 
-const { currentPage: currentPageProp, totalPages: totalPagesProp } = toRefs(props);
+const { currentPage: currentPageProp } = toRefs(props);
+
+const { disableNext, disablePrevious, totalPages, params } = usePagination({ totalRecords: props.totalRecords });
 
 const startPage = computed(() => {
   if (currentPageProp.value === 1) {
     return 1;
   }
 
-  if (currentPageProp.value === props.totalPages) {
-    return props.totalPages - props.maxVisibleButtons + 1;
+  if (currentPageProp.value === totalPages.value) {
+    return totalPages.value - props.maxVisibleButtons + 1;
   }
 
   return currentPageProp.value - 1;
 });
 
 const endPage = computed(() => {
-  return Math.min(startPage.value + props.maxVisibleButtons - 1, props.totalPages);
+  return Math.min(startPage.value + props.maxVisibleButtons - 1, totalPages.value);
 });
 const pages = computed(() => {
   const range = [];
@@ -60,7 +57,7 @@ const isInFirstPage = computed(() => {
   return currentPageProp.value === 1;
 });
 const isInLastPage = computed(() => {
-  return currentPageProp.value === props.totalPages;
+  return currentPageProp.value === totalPages.value;
 });
 
 function onClickFirstPage() {
@@ -69,26 +66,77 @@ function onClickFirstPage() {
 function onClickPreviousPage() {
   emits('change', currentPageProp.value - 1);
 }
-function onClickPage(page) {
+function onClickPage(page: any) {
   emits('change', page);
 }
 function onClickNextPage() {
   emits('change', currentPageProp.value + 1);
 }
 function onClickLastPage() {
-  emits('change', props.totalPages);
-}
-function isPageActive(page) {
-  return currentPageProp.value === page;
+  emits('change', totalPages.value);
 }
 
-function handlePerPageChange(e) {
-  emits('perPageChange', +e.target.value);
+function handlePerPageChange(e: any) {
+  emits('perPageChange', +(e.target as HTMLInputElement).value);
+}
+
+function handlePageChange(e: any) {
+  params.current_page = +e.target.value >= totalPages.value ? totalPages.value : +e.target.value;
+
+  emits('change:simple', { ...params });
+}
+
+function goToPreviousPage() {
+  if (params.current_page === 1) {
+    return false;
+  }
+  params.current_page--;
+  emits('change:simple', { ...params });
+}
+
+function goToNextPage() {
+  if (params.current_page >= totalPages.value) {
+    return false;
+  }
+  params.current_page++;
+  emits('change:simple', { ...params, change_type: 'page' });
 }
 </script>
 
 <template>
-  <div class="flex items-center justify-between border-t border-gray-200 bg-white py-3">
+  <div v-if="paginationType === 'simple'" class="mx-auto flex justify-between w-72 items-center py-4 px-3">
+    <div
+      class="p-2 cursor-pointer" :class="{ 'pointer-events-none text-gray-400': disablePrevious }"
+      tabindex="0"
+      role="link"
+      aria-label="go to previous page"
+      @keyup.enter="goToPreviousPage"
+      @click="goToPreviousPage"
+    >
+      <Icon icon="mdi:arrow-left" class="text-xl w-full" />
+    </div>
+    <div class="flex space-x-2 items-center">
+      <span>page</span>
+      <input v-model="params.current_page" class="w-[4rem] text-center border border-gray-400 py-1 px-1 rounded-md" type="text" @change="handlePageChange">
+      <span>of</span>
+      <span>
+        {{ totalPages }}
+      </span>
+    </div>
+    <div
+      class="p-2 cursor-pointer" :class="{ 'pointer-events-none text-gray-400': disableNext }"
+      tabindex="0"
+      role="link"
+      aria-label="go to next page"
+      @click="goToNextPage"
+      @keyup.enter="goToNextPage"
+    >
+      <Icon
+        icon="mdi:arrow-right" class="text-xl"
+      />
+    </div>
+  </div>
+  <div v-else class="flex items-center justify-between border-t border-gray-200 bg-white py-3">
     <div class="flex flex-1 justify-between sm:hidden">
       <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
       <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
@@ -102,13 +150,13 @@ function handlePerPageChange(e) {
           {{ ' ' }}
           to
           {{ ' ' }}
-          <span class="font-medium">{{ perPage * currentPageProp > total ? total : perPage * currentPageProp }}</span>
+          <span class="font-medium">{{ perPage * currentPageProp > totalRecords ? totalRecords : perPage * currentPageProp }}</span>
           {{ ' ' }}
           of
           {{ ' ' }}
-          <span class="font-medium">{{ total }}</span>
+          <span class="font-medium">{{ totalRecords }}</span>
           {{ ' ' }}
-          results
+          totalRecords
         </p>
       </div>
       <div class="flex items-center space-x-2">
@@ -133,7 +181,7 @@ function handlePerPageChange(e) {
             <Icon icon="mdi:chevron-left" class="h-5 w-5" />
           </button>
           <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
-          <template v-for="(page, index) in pages" :key="index">
+          <template v-for="(page) in pages" :key="page">
             <button
               aria-current="page" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               :class="{ 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-indigo-600 ring-0': currentPage === page.name }"

@@ -5,7 +5,8 @@ export function usePagePermissions(useMockData = false) {
   // const pageListMock = toRef(pageData);
   // const groupListMock = toRef(groupData);
 
-  const baseUrl = 'uxp/v1';
+  // const baseUrl = 'uxp/v1';
+  const baseUrl = 'https://jsonplaceholder.typicode.com';
 
   const getPages = async ({
     page,
@@ -18,8 +19,11 @@ export function usePagePermissions(useMockData = false) {
     filters?: string;
     sortBy?: string;
   }) => {
-    const { data } = await $api.get(
+    /* const { data } = await $api.get(
       `${baseUrl}/getPages`
+    ); */
+    const { data } = await $api.get(
+      `${baseUrl}/users`
     );
 
     return useMockData ? pageListMock : data;

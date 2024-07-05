@@ -1,6 +1,8 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
     "target": "es2016",
+    "ignoreDeprecations": "5.0",
     "jsx": "preserve",
     "lib": ["DOM", "ESNext"],
     "baseUrl": ".",
@@ -10,6 +12,7 @@
       "@/*": ["src/*"]
     },
     "resolveJsonModule": true,
+    "resolvePackageJsonExports": false,
     "types": [
       "vite/client",
       "unplugin-vue-macros/macros-global",
@@ -24,9 +27,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "eslint.config.js"
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue"
   ]
 }

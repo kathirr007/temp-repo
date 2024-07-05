@@ -78,7 +78,7 @@ $api.interceptors.response.use(
   (err: AxiosError) =>
     handleError(
       err,
-      (err.response?.config as CustomAxiosRequestConfig)?.catchErrors
+      (err.response?.config as CustomAxiosRequestConfig)?.catchErrors || true
     )
 );
 

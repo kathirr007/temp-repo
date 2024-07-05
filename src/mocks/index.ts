@@ -16,6 +16,90 @@ const pageData = [
     uri_pattern: '/Device/Oppo/G53'
   },
   {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
+    view_id: '2002',
+    uri_pattern: '/Device/Samsung/G51'
+  },
+  {
+    view_id: '2003',
+    uri_pattern: '/Device/Lg/G52'
+  },
+  {
+    view_id: '2004',
+    uri_pattern: '/Device/Oppo/G53'
+  },
+  {
     view_id: '2005',
     uri_pattern: '/Device/Mi/G54'
   }

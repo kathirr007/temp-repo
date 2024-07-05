@@ -13,6 +13,7 @@ declare module 'vue' {
     ApplyPermissions: typeof import('./components/ApplyPermissions.vue')['default']
     CommonDatatable: typeof import('./components/common/Datatable.vue')['default']
     CommonPagination: typeof import('./components/common/Pagination.vue')['default']
+    CustomTable: typeof import('./components/custom-table.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
