@@ -1,32 +1,17 @@
-<script setup lang="ts" generic="T extends any, O extends any">
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
+<script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query';
 import { useRouteParams } from '@vueuse/router';
 
 defineOptions({
   name: 'AddEditPagePermission'
 });
 
-const selectedPagesLength = ref(0);
+// const selectedPagesLength = ref(0);
 const currentRoute = useRoute();
 const pageId = useRouteParams('id');
 
-const userGroupCols
-        = ref([
-          { field: 'id', title: 'ID', isUnique: true, type: 'number' },
-          { field: 'name', title: 'Name' },
-          { field: 'phone', title: 'Phone' },
-          { field: 'email', title: 'Email' }
-        ]) || [];
-const params = reactive({
-  current_page: 1,
-  pagesize: 10,
-  sort_column: 'id',
-  sort_direction: 'asc'
-});
-
-const queryClient = useQueryClient();
-const { getAll: getAllUserGroups } = useUserGroups();
 const { getOnePage } = usePagePermissions(true);
+/* const { getAll: getAllUserGroups } = useUserGroups();
 
 function updateSelectedPagesLength(list: Record<string, any>[]) {
   selectedPagesLength.value = list.length;
@@ -47,7 +32,7 @@ const {
     }
     return null;
   }
-});
+}); */
 
 const { data: pageData } = useQuery({
   queryKey: ['get-one-page'],
@@ -58,7 +43,6 @@ const { data: pageData } = useQuery({
 
     });
     if (data) {
-      // console.log('page-data', data);
       return data;
     }
     return null;
@@ -73,7 +57,7 @@ const { data: pageData } = useQuery({
         <button class="p-1 px-3 bg-black rounded-md text-white">
           &#129128;
         </button>
-        <h2 class="mx-2">
+        <h2 class="mx-2 text-xl font-bold">
           Apply Permissions
         </h2>
       </div>

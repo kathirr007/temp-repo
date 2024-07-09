@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query';
 import { computed, ref } from 'vue';
-import VueMultiselect from 'vue-multiselect';
 
 const searchTerm = ref('');
 const isConfirmDialog = ref(false);
@@ -9,22 +8,28 @@ const selectedPage = ref();
 
 const callSearchGroup = computed(() => !!searchTerm.value.length);
 
-const queryClient = useQueryClient();
 const { pageListMock } = usePagePermissions();
 const { searchGroups } = useUserGroups(true);
-// const selectedGroups = ref([]);
 
 const { selectedItems: selectedGroups, selectedItem: selectedGroup, removeItem } = useListUtils();
 
-const invalidateSearch = useDebounceFn(() => queryClient.invalidateQueries({ queryKey: ['search-groups'] }), 1000);
-
-function onSearch(termValue: string) {
-  console.log('...searching');
-  searchTerm.value = termValue;
-  invalidateSearch();
+async function searchUserGroups() {
+  const filterString = `displayName ${searchTerm.value}`;
+  const data = await searchGroups({ filters: filterString
+  });
+  if (data) {
+    console.log('user-groups-data', data);
+    return data;
+  }
+  return [];
 }
 
-const { data: userGroupsData, isLoading: loadingUserGroups, isFetching: fetchingUserGroups } = useQuery({
+const onSearch = useDebounceFn((termValue: string) => {
+  console.log('...searching');
+  searchTerm.value = termValue;
+}, 1000);
+
+/* const { data: userGroupsData, isLoading: loadingUserGroups, isFetching: fetchingUserGroups } = useQuery({
   queryKey: ['search-groups'],
   queryFn: async () => {
     const filterString = `displayName ${searchTerm.value}`;
@@ -36,6 +41,11 @@ const { data: userGroupsData, isLoading: loadingUserGroups, isFetching: fetching
     }
     return null;
   },
+  enabled: callSearchGroup
+}); */
+const { data: userGroupsData, isLoading: loadingUserGroups, isFetching: fetchingUserGroups } = useQuery({
+  queryKey: ['search-groups', searchTerm],
+  queryFn: searchUserGroups,
   enabled: callSearchGroup
 });
 
@@ -61,7 +71,7 @@ async function handleConfirmCancel() {
     <div class="space-y-3 mt-3 relative">
       <div class="flex-col sm:flex-row flex justify-between w-full items-center space-y-2 sm:space-y-0 sm:space-x-2">
         <div class="w-full md:w-1/3 sm:w-80">
-          <VueMultiselect
+          <CommonMultiSelect
             v-model="selectedGroups" :options="userGroupsData || []" :multiple="true" :close-on-select="false" :clear-on-select="false"
             :preserve-search="true" placeholder="Type to search groups..." label="displayName" track-by="displayName" select-label=""
             selected-label="" deselect-label="" class="select-groups-dropdown"
@@ -93,10 +103,7 @@ async function handleConfirmCancel() {
                 </div>
               </div>
             </template>
-            <template #caret="{ toggle }">
-              <Icon icon="mdi:chevron-down" class="text-2xl multiselect__select" @mousedown.prevent.stop="toggle()" />
-            </template>
-          </VueMultiselect>
+          </CommonMultiSelect>
         </div>
         <div class="flex items-center">
           <label for="inheritFrom" class="mr-2">Inherit from</label>

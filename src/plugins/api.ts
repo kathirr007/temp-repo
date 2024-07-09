@@ -4,7 +4,6 @@ import type {
   AxiosResponse,
   InternalAxiosRequestConfig
 } from 'axios';
-import app from '@/app';
 import type { CustomAxiosRequestConfig } from '@/types/common.type';
 import { type ToastOptions, toast } from 'vue3-toastify';
 
@@ -68,7 +67,7 @@ function handleError(err: AxiosError, catchErrors = true) {
     throw err;
   }
   else {
-    toast('Unable to connect to server. Please check your internet connectivity', toastOptions);
+    toast('Unable to connect to server. Please check your request url.', toastOptions);
   }
 }
 
@@ -78,7 +77,7 @@ $api.interceptors.response.use(
   (err: AxiosError) =>
     handleError(
       err,
-      (err.response?.config as CustomAxiosRequestConfig)?.catchErrors || true
+      (err.config as CustomAxiosRequestConfig)?.catchErrors || (err.response?.config as CustomAxiosRequestConfig)?.catchErrors
     )
 );
 

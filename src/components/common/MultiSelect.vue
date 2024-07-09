@@ -9,9 +9,12 @@ const props = withDefaults(defineProps<{
 </script>
 
 <template>
-  <VueMultiselect v-bind="{ ...props }">
+  <VueMultiselect v-bind="{ ...props, ...$attrs }">
     <template v-if="!loading" #caret="{ toggle }">
       <Icon icon="mdi:chevron-down" class="text-2xl multiselect__select" @mousedown.prevent.stop="toggle()" />
+    </template>
+    <template v-for="(_, name) in $slots" #[name]="scope">
+      <slot :name v-bind="scope" />
     </template>
   </VueMultiselect>
 </template>
