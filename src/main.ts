@@ -4,12 +4,10 @@ import { Icon } from '@iconify/vue';
 import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
 import Vue3Datatable from '@bhplugin/vue3-datatable';
 import { VueQueryPlugin, type VueQueryPluginOptions } from '@tanstack/vue-query';
-import VSelect from 'vue-select';
 
 import 'vue3-toastify/dist/index.css';
 import './styles/main.scss';
 import '@bhplugin/vue3-datatable/dist/style.css';
-import 'vue-select/dist/vue-select.css';
 import 'vue-multiselect/dist/vue-multiselect.css';
 
 const vueQueryConfig: VueQueryPluginOptions = {
@@ -26,7 +24,6 @@ const vueQueryConfig: VueQueryPluginOptions = {
 app.use(router);
 app.component('Icon', Icon);
 app.component('Vue3Datatable', Vue3Datatable);
-app.component('VSelect', VSelect);
 
 app.use(
   Vue3Toasity,

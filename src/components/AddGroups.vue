@@ -60,35 +60,6 @@ async function handleConfirmCancel() {
   <div class="min-w-screen">
     <div class="space-y-3 mt-3 relative">
       <div class="flex-col sm:flex-row flex justify-between w-full items-center space-y-2 sm:space-y-0 sm:space-x-2">
-        <!-- <input
-          id="search"
-          v-model="searchTerm"
-          type="search"
-          placeholder="Search Group..."
-          class="search-input p-2 mb-1"
-        > -->
-        <!-- <VueMultiselect
-          v-model="selectedGroups"
-          :options="userGroupsData || []"
-
-          :loading="loadingUserGroups || fetchingUserGroups"
-          placeholder="Type to search groups..."
-          label="displayName"
-          @search-change="onSearch"
-        >
-          <template #noResult>
-            Oops! No elements found. Consider changing the search query.
-          </template>
-          <template #selection="{ values, search, isOpen }">
-            <span
-              v-if="values.length"
-              v-show="!isOpen"
-              class="multiselect__single"
-            >
-              {{ values.length }} options selected
-            </span>
-          </template>
-        </VueMultiselect> -->
         <div class="w-full md:w-1/3 sm:w-80">
           <VueMultiselect
             v-model="selectedGroups" :options="userGroupsData || []" :multiple="true" :close-on-select="false" :clear-on-select="false"
@@ -127,31 +98,6 @@ async function handleConfirmCancel() {
             </template>
           </VueMultiselect>
         </div>
-        <!-- <VSelect v-model="selectedGroups" :close-on-select="false" multiple placeholder="Select Groups" class="w-2/5 v-select-dropdown" label="displayName" :filterable="false" :options="userGroupsData" deselect-from-dropdown @search="onSearch">
-          <template #no-options>
-            Type to search for user groups...
-          </template>
-          <template #option="option">
-            <div class="flex flex-1 items-center cursor-pointer">
-              <label :for="option.id" class="cursor-pointer flex items-center p-2 space-x-2 w-full">
-                <input :id="option.id" v-model="selectedGroups" :value="option" name="selectedGroups" type="checkbox">
-                <div class="flex flex-col">
-                  <div class="group-name font-bold">
-                    {{ option.displayName }}
-                  </div>
-                  <div class="group-type">
-                    {{ option.resourceType }}
-                  </div>
-                </div>
-              </label>
-            </div>
-          </template>
-          <template #selected-option="option">
-            <div class="selected d-center">
-              {{ option.displayName }}
-            </div>
-          </template>
-        </VSelect> -->
         <div class="flex items-center">
           <label for="inheritFrom" class="mr-2">Inherit from</label>
           <VueMultiselect
@@ -173,55 +119,8 @@ async function handleConfirmCancel() {
               <Icon icon="mdi:chevron-down" class="text-2xl multiselect__select" @mousedown.prevent.stop="toggle()" />
             </template>
           </VueMultiselect>
-          <!-- <v-select :options="pageListMock" class="w-40 v-select-dropdown">
-            <template #option="props">
-              <span>
-                {{ props.view_id }}
-              </span>
-            </template>
-            <template #open-indicator="{ attributes }">
-              <Icon icon="mdi:chevron-down" v-bind="attributes" class="text-2xl" />
-            </template>
-            <template #selected-option="option">
-              <div class="selected d-center">
-                {{ option.view_id }}
-              </div>
-            </template>
-          </v-select> -->
         </div>
       </div>
-
-      <!-- <ul v-if="searchTerm" ref="searchListRef" class="search-list absolute">
-        <template v-if="userGroupsData?.length">
-          <li
-            v-for="group in userGroupsData"
-            :key="group.displayName"
-            class="cursor-pointer hover:bg-gray-100 p-1"
-            tabindex="0"
-            @click="addItem(group)"
-            @keyup.enter="addItem(group)"
-          >
-            <div class="flex flex-1 items-center cursor-pointer">
-              <label :for="group.id" class="cursor-pointer flex items-center p-2 space-x-2 w-full">
-                <input :id="group.id" v-model="selectedGroups" :value="group" name="selectedGroups" type="checkbox">
-                <div class="flex flex-col">
-                  <div class="group-name">
-                    {{ group.displayName }}
-                  </div>
-                  <div class="group-type">
-                    {{ group.resourceType }}
-                  </div>
-                </div>
-              </label>
-            </div>
-          </li>
-        </template>
-        <template v-else>
-          <li>
-            {{ 'No data found.' }}
-          </li>
-        </template>
-      </ul> -->
     </div>
     <ul class="user-groups-list overflow-y-auto">
       <template v-if="selectedGroups.length">
