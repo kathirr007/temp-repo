@@ -100,7 +100,7 @@ async function handleConfirmCancel() {
         </div>
         <div class="flex items-center">
           <label for="inheritFrom" class="mr-2">Inherit from</label>
-          <VueMultiselect
+          <CommonMultiSelect
             v-model="selectedPage"
             :options="pageListMock"
             placeholder="Select page"
@@ -115,10 +115,7 @@ async function handleConfirmCancel() {
                 {{ props.option.view_id }}
               </span>
             </template>
-            <template v-if="!(loadingUserGroups || fetchingUserGroups)" #caret="{ toggle }">
-              <Icon icon="mdi:chevron-down" class="text-2xl multiselect__select" @mousedown.prevent.stop="toggle()" />
-            </template>
-          </VueMultiselect>
+          </CommonMultiSelect>
         </div>
       </div>
     </div>
