@@ -2,6 +2,7 @@ import type { MaybeRef } from 'vue';
 
 export function useListUtils(listCollection?: MaybeRef<Record<string, any>[]> | Record<string, any>[], searchField?: string) {
   const searchTerm = ref('');
+  const selectedItem = ref<Record<string, any>>();
   const selectedItems = ref<Record<string, any>[]>([]);
   const searchListRef = ref(null);
   const listData = toRef(listCollection || []);
@@ -25,19 +26,25 @@ export function useListUtils(listCollection?: MaybeRef<Record<string, any>[]> | 
     searchTerm.value = '';
   }
 
-  function removeItem(itemId: string) {
-    const foundIndex = selectedItems.value.findIndex(item => item.id === itemId);
+  function removeItem(itemId: string, keyToFind: string) {
+    const foundIndex = selectedItems.value.findIndex(item => item[keyToFind] === itemId);
     if (foundIndex !== -1) {
       selectedItems.value.splice(foundIndex, 1);
     }
   }
 
+  function clearAll(searchParam?: string) {
+    selectedItems.value = [];
+  }
+
   return {
     searchTerm,
+    selectedItem,
     selectedItems,
     searchListRef,
     searchItemsList,
     addItem,
-    removeItem
+    removeItem,
+    clearAll
   };
 }

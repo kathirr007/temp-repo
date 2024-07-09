@@ -5,8 +5,8 @@ export function usePagePermissions(useMockData = false) {
   // const pageListMock = toRef(pageData);
   // const groupListMock = toRef(groupData);
 
-  // const baseUrl = 'uxp/v1';
-  const baseUrl = 'https://jsonplaceholder.typicode.com';
+  const baseUrl = 'uxp/v1';
+  // const baseUrl = 'https://jsonplaceholder.typicode.com';
 
   const getPages = async ({
     page,
@@ -19,18 +19,38 @@ export function usePagePermissions(useMockData = false) {
     filters?: string;
     sortBy?: string;
   }) => {
-    /* const { data } = await $api.get(
-      `${baseUrl}/getPages`
-    ); */
     const { data } = await $api.get(
-      `${baseUrl}/users`
+      `${baseUrl}/getPages`
     );
+    /* const { data } = await $api.get(
+      `${baseUrl}/users`
+    ); */
 
     return useMockData ? pageListMock : data;
   };
 
+  const getOnePage = async ({
+    viewId,
+    uriPattern
+  }: {
+    viewId: string;
+    uriPattern: string;
+  }) => {
+    // getPage?pageId=3000&pageUri=/Device/
+    const { data } = await $api.get(
+      `${baseUrl}/getPage?pageId=${viewId}&pageUri=${uriPattern}`
+    );
+    /* const { data } = await $api.get(
+      `${baseUrl}/users`
+    ); */
+
+    return useMockData ? pageListMock[Math.floor(Math.random() * pageListMock.length)] : data;
+  };
+
   return {
+    groupListMock,
+    pageListMock,
     getPages,
-    groupListMock
+    getOnePage
   };
 }

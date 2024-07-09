@@ -18,6 +18,7 @@ const cols = ref([
 // const queryClient = useQueryClient();
 const { getPages } = usePagePermissions(true);
 const { params } = usePagination({});
+const router = useRouter();
 
 const {
   data: pagesListData,
@@ -50,6 +51,13 @@ function changeServer(data: PaginationParams) {
   else {
     getPages({});
   }
+}
+
+function gotoManage(data: any) {
+  router.push({ name: '/page-permissions/[id]/',
+    params: { id: data.view_id },
+    query: { uriPattern: data.uri_pattern }
+  });
 }
 </script>
 
@@ -91,17 +99,18 @@ function changeServer(data: PaginationParams) {
 
         @change="changeServer"
       >
-        <template #action="data">
+        <template #action="{ value }">
           <div class="text-right">
-            <router-link
+            <!-- <router-link
               :to="{ name: '/page-permissions/[id]/',
                      params: { id: data.value.view_id },
+                     query: { uriPattern: data.value.uri_pattern },
               }"
             >
-              <button type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                Manage
-              </button>
-            </router-link>
+          </router-link> -->
+            <button type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" @click="gotoManage(value)">
+              Manage
+            </button>
           </div>
         </template>
       </vue3-datatable>

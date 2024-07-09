@@ -1,11 +1,15 @@
 <script setup lang="ts" generic="T extends any, O extends any">
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useRouteParams } from '@vueuse/router';
 
 defineOptions({
   name: 'AddEditPagePermission'
 });
 
 const selectedPagesLength = ref(0);
+const currentRoute = useRoute();
+const pageId = useRouteParams('id');
+
 const userGroupCols
         = ref([
           { field: 'id', title: 'ID', isUnique: true, type: 'number' },
@@ -22,6 +26,7 @@ const params = reactive({
 
 const queryClient = useQueryClient();
 const { getAll: getAllUserGroups } = useUserGroups();
+const { getOnePage } = usePagePermissions(true);
 
 function updateSelectedPagesLength(list: Record<string, any>[]) {
   selectedPagesLength.value = list.length;
@@ -37,17 +42,28 @@ const {
     const data = await getAllUserGroups({});
 
     if (data) {
-      console.log(data);
+      // console.log(data);
       return data;
     }
     return null;
   }
 });
 
-function handleTableChange(e: any) {
-  console.log('datatable change event: ', e);
-  queryClient.invalidateQueries({ queryKey: ['user-groups'] });
-}
+const { data: pageData } = useQuery({
+  queryKey: ['get-one-page'],
+  queryFn: async () => {
+    const data = await getOnePage({
+      viewId: pageId.value as string,
+      uriPattern: currentRoute.query.uriPattern as string
+
+    });
+    if (data) {
+      // console.log('page-data', data);
+      return data;
+    }
+    return null;
+  }
+});
 </script>
 
 <template>
@@ -66,30 +82,51 @@ function handleTableChange(e: any) {
       </button>
     </div>
   </header>
-  <vue3-datatable
-    :rows="userGroupListData"
-    :columns="userGroupCols"
-    :loading="loadingUserGroupListData || fetchingUserGroupListData"
-    :total-rows="userGroupListData?.length"
-    :is-server-mode="true"
-    :page-size="params.pagesize"
-    :sortable="true"
-    :sort-column="params.sort_column"
-    :sort-direction="params.sort_direction"
-    @change="handleTableChange"
-  />
-  <main class="p-8 main-wrapper">
-    <section class="pages mb-4 p-4">
-      <Accordion>
+  <main class="p-8 main-wrapper bg-gray-100">
+    <section class="pages mb-4 p-4 rounded-md bg-white">
+      <!-- <Accordion>
         <template #title>
-          Adding Permissions {{ selectedPagesLength ? `to ${selectedPagesLength} pages` : '' }}
+          Adding Permissions to {{ currentRoute.params.id as string }}
         </template>
         <template #body>
           <AddPages @list-update="updateSelectedPagesLength" />
         </template>
-      </Accordion>
+      </Accordion> -->
+      <h2 class="text-xl font-bold">
+        Adding Permissions to {{ (currentRoute.params as any).id as string }}
+      </h2>
+      <div class="permission-pages-wrapper">
+        <ul class="permission-pages-list">
+          <template v-if="pageData">
+            <li class="flex justify-between items-center py-2">
+              <!-- <span class="page-title">
+              {{ pageData.uri_pattern }}
+            </span> -->
+              <span class="page-url">
+                {{ pageData.uri_pattern }}
+              </span>
+              <span class="page-id">
+                {{ pageData.view_id }}
+              </span>
+            <!-- <span
+              tabindex="0"
+              class="p-1 px-2 cursor-pointer mr-1 text-2xl"
+              @click="removeItem(item.id)"
+              @keyup.enter="removeItem(item.id)"
+            >
+              &times;
+            </span> -->
+            </li>
+          </template>
+          <template v-else>
+            <li class="text-center py-2">
+              {{ 'No page added.' }}
+            </li>
+          </template>
+        </ul>
+      </div>
     </section>
-    <section class="users p-4">
+    <section class="users p-4  rounded-md bg-white">
       <Accordion>
         <template #title>
           Add Group
@@ -103,30 +140,4 @@ function handleTableChange(e: any) {
 </template>
 
 <style scoped lang="scss">
-.main-wrapper {
-  background-color: #f8f8f8;
-
-  .pages,
-  .users {
-    border-radius: 6px;
-    background-color: #fff;
-  }
-  .permission-pages-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 1rem 0 0 0;
-    li {
-      border-top: 1px solid #e5e5e5;
-      &:last-child {
-        border-bottom: 1px solid #e5e5e5;
-      }
-
-      .action-button {
-        font-size: 1.5rem;
-        display: inline-block;
-        cursor: pointer;
-      }
-    }
-  }
-}
 </style>

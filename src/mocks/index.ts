@@ -148,7 +148,70 @@ const groupData = [
   }
 ];
 
+const groupSearchData = {
+  Resources: [
+    {
+      resourceType: 'Group',
+      displayName: 'Read Group',
+      label: 'Read Group'
+    },
+    {
+      resourceType: 'Group',
+      displayName: 'Write Group',
+      label: 'Write Group'
+    },
+    {
+      resourceType: 'Group',
+      displayName: 'Read & Write Group',
+      label: 'Read & Write Group'
+    },
+    {
+      resourceType: 'Group',
+      displayName: 'Admin Group',
+      label: 'Admin Group'
+    },
+    {
+      resourceType: 'Group',
+      displayName: 'Guests Group',
+      label: 'Guests Group'
+    },
+    {
+      resourceType: 'Group',
+      displayName: 'User Group',
+      label: 'User Group'
+    }
+  ]
+};
+
+const groupSearchDataOld = {
+  Resources: [
+    {
+      schemas: [],
+      id: '',
+      externalId: '',
+      meta: {
+        resourceType: 'Group',
+        created: '',
+        lastModified: ''
+      },
+      displayName: 'Read Group'
+    },
+    {
+      schemas: [],
+      id: '',
+      externalId: '',
+      meta: {
+        resourceType: 'Group',
+        created: '',
+        lastModified: ''
+      },
+      displayName: 'Write Group'
+    }
+  ]
+};
+
 export {
   pageData,
-  groupData
+  groupData,
+  groupSearchData
 };

@@ -1,6 +1,8 @@
 import $api from '@/plugins/api';
 
-export function useUserGroups() {
+import { groupSearchData } from '@/mocks/index';
+
+export function useUserGroups(useMockData = false) {
   const baseUrl = 'https://jsonplaceholder.typicode.com';
 
   const getAll = async ({
@@ -21,7 +23,18 @@ export function useUserGroups() {
     return data;
   };
 
+  const searchGroups = async ({ filters }: { filters: string }) => {
+    const baseUrl = 'scim/v1';
+
+    const { data } = await $api.get(
+      `${baseUrl}/Groups?filter=${filters}`
+    );
+
+    return useMockData ? groupSearchData.Resources : data;
+  };
+
   return {
-    getAll
+    getAll,
+    searchGroups
   };
 }

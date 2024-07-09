@@ -1,50 +1,31 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query';
+import { useRouteParams } from '@vueuse/router';
+
 const emits = defineEmits<{
   (e: 'listUpdate', value: Record<string, any>[]): void;
 }>();
 
-const people = ref([
-  {
-    name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton@example.com',
-    role: 'Member'
-  },
-  {
-    name: 'Lindsay Walton 2',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton-2@example.com',
-    role: 'Member'
-  },
-  {
-    name: 'Lindsay Walton 3',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton-3@example.com',
-    role: 'Member'
-  }
-]);
+const currentRoute = useRoute();
+const pageId = useRouteParams('id');
+const searchTerm = ref('');
+// const uriPattern = useRouteQuery('uriPattern');
 
-const { pageListMock } = usePagePermissions();
-const { searchTerm, searchListRef, selectedItems, searchItemsList, removeItem } = useListUtils(pageListMock, 'title');
-const currentPage = ref(1);
-const totalRecords = ref(98);
-const perPage = ref(10);
-const totalPages = computed(() => {
-  return Math.ceil(totalRecords.value / perPage.value);
-});
+const { getOnePage } = usePagePermissions(true);
 
-function onPageChange(page: any) {
-  currentPage.value = page;
-}
+const { data: pageData, isLoading, isFetching } = useQuery({
+  queryKey: ['get-one-page'],
+  queryFn: async () => {
+    const data = await getOnePage({
+      viewId: pageId.value as string,
+      uriPattern: currentRoute.query.uriPattern as string
 
-function onPerPageChange(val: any) {
-  currentPage.value = 1;
-  perPage.value = val;
-}
-
-watchEffect(() => {
-  if (selectedItems.value) {
-    emits('listUpdate', selectedItems.value);
+    });
+    if (data) {
+      console.log('page-data', data);
+      return data;
+    }
+    return null;
   }
 });
 </script>
@@ -52,7 +33,7 @@ watchEffect(() => {
 <template>
   <div class="min-w-screen">
     <div class="space-y-3 mt-3 relative">
-      <div class="flex-col sm:flex-row flex justify-between w-full">
+      <!-- <div class="flex-col sm:flex-row flex justify-between w-full">
         <input
           id="search"
           v-model="searchTerm"
@@ -71,10 +52,10 @@ watchEffect(() => {
             </option>
           </select>
         </div>
-      </div>
+      </div> -->
 
       <ul v-if="searchTerm" ref="searchListRef" class="search-list absolute">
-        <template v-if="searchItemsList.length">
+        <!-- <template v-if="searchItemsList.length">
           <li
             v-for="page in searchItemsList"
             :key="page.id"
@@ -92,30 +73,31 @@ watchEffect(() => {
           <li class="text-center p-2">
             {{ 'No data found.' }}
           </li>
-        </template>
+        </template> -->
+        <li>test data</li>
       </ul>
     </div>
     <div class="permission-pages-wrapper">
       <ul class="permission-pages-list">
-        <template v-if="selectedItems.length">
-          <li v-for="item in selectedItems" :key="item.id" class="flex justify-between items-center py-2">
-            <span class="page-title">
-              {{ item.title }}
-            </span>
+        <template v-if="pageData">
+          <li class="flex justify-between items-center py-2">
+            <!-- <span class="page-title">
+              {{ pageData.uri_pattern }}
+            </span> -->
             <span class="page-url">
-              {{ item.url }}
+              {{ pageData.uri_pattern }}
             </span>
             <span class="page-id">
-              {{ item.pageId }}
+              {{ pageData.view_id }}
             </span>
-            <span
+            <!-- <span
               tabindex="0"
               class="p-1 px-2 cursor-pointer mr-1 text-2xl"
               @click="removeItem(item.id)"
               @keyup.enter="removeItem(item.id)"
             >
               &times;
-            </span>
+            </span> -->
           </li>
         </template>
         <template v-else>
@@ -124,10 +106,6 @@ watchEffect(() => {
           </li>
         </template>
       </ul>
-
-      <CommonPagination :total-pages="totalPages" :total="totalRecords" :per-page="perPage" :current-page="currentPage" @change="onPageChange" @per-page-change="onPerPageChange" />
-
-      <CommonDatatable :table-data="people" checkbox-value-field="email" />
     </div>
   </div>
 </template>
