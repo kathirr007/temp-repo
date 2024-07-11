@@ -20,6 +20,8 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/[...all]': RouteRecordInfo<'/[...all]', '/:all(.*)', { all: ParamValue<true> }, { all: ParamValue<false> }>,
+    '/group-permissions/': RouteRecordInfo<'/group-permissions/', '/group-permissions', Record<never, never>, Record<never, never>>,
+    '/group-permissions/[id]/': RouteRecordInfo<'/group-permissions/[id]/', '/group-permissions/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/page-permissions/': RouteRecordInfo<'/page-permissions/', '/page-permissions', Record<never, never>, Record<never, never>>,
     '/page-permissions/[id]/': RouteRecordInfo<'/page-permissions/[id]/', '/page-permissions/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }

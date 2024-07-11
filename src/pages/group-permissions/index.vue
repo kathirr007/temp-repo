@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="T extends any, O extends any">
-import type { PaginationParams } from '@/types/common.type';
+import { DrawerSize, type PaginationParams } from '@/types/common.type';
 import type Vue3Datatable from '@bhplugin/vue3-datatable';
 import { useQuery } from '@tanstack/vue-query';
 
 defineOptions({
-  name: 'PagePermissionsList'
+  name: 'GroupPermissionsList'
 });
 
 const datableRef = ref<InstanceType<typeof Vue3Datatable> | null>(null);
@@ -14,6 +14,9 @@ const cols = ref([
   { field: 'action', title: '', type: 'string', headerClass: 'justify-end'
   }
 ]) || [];
+const selectedGroups = ref<Record<string, any>[]>([]);
+const selectedNewGroups = ref<Record<string, any>[]>([]);
+const openDrawer = ref(false);
 
 // const queryClient = useQueryClient();
 const { getPages } = usePagePermissions(true);
@@ -59,6 +62,18 @@ function gotoManage(data: any) {
     query: { uriPattern: data.uri_pattern }
   });
 }
+
+function handleRowSelect(rows: Record<string, any>[]) {
+  selectedGroups.value = [...rows];
+}
+
+function handleItemsSelected(groups: Record<string, any>[]) {
+  selectedNewGroups.value = [...groups];
+}
+
+function handleAddNewUsers() {
+  console.log(selectedNewGroups.value);
+}
 </script>
 
 <template>
@@ -76,8 +91,16 @@ function gotoManage(data: any) {
       </div>
     </header>
     <main class="main-wrapper py-4">
-      <div class="mb-5">
+      <div class="mb-5 flex justify-between">
         <input v-model="params.search" type="search" class="form-input max-w-xs border border-gray-400 rounded-md p-1 px-2.5 w-2/5" placeholder="Search...">
+        <div class="actions flex items-center space-x-2">
+          <button type="button" class="flex items-center space-x-0.5 rounded-md bg-transparent px-2.5 py-1.5 text-sm font-semibold text-gray-900  hover:bg-gray-50 text-pink-600" @click="openDrawer = true">
+            <Icon class="h-5 w-5" icon="mdi:plus" /> <span>Add Users</span>
+          </button>
+          <button v-if="selectedGroups.length" type="button" class="flex items-center space-x-0.5 rounded-md bg-transparent px-2.5 py-1.5 text-sm font-semibold text-gray-900  hover:bg-gray-50">
+            <Icon class="h-5 w-5" icon="mdi:close" /> <span>Remove</span>
+          </button>
+        </div>
       </div>
       <div class="p-3 shadow-md rounded-md border-1 border bg-white">
         <vue3-datatable
@@ -92,22 +115,23 @@ function gotoManage(data: any) {
           :page="params.current_page"
           :page-size="params.pagesize"
           :search="params.search"
+          has-checkbox
           :pagination="true"
           class="custom-bh-table hide-pagination"
           row-class="bg-white"
           cell-class="bg-white border-y border-gray-200"
-
           @change="changeServer"
+          @row-select="handleRowSelect"
         >
           <template #action="{ value }">
             <div class="text-right">
               <!-- <router-link
-              :to="{ name: '/page-permissions/[id]/',
-                     params: { id: data.value.view_id },
-                     query: { uriPattern: data.value.uri_pattern },
-              }"
-            >
-          </router-link> -->
+                :to="{ name: '/page-permissions/[id]/',
+                       params: { id: data.value.view_id },
+                       query: { uriPattern: data.value.uri_pattern },
+                }"
+              >
+            </router-link> -->
               <button type="button" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" @click="gotoManage(value)">
                 Manage
               </button>
@@ -120,17 +144,29 @@ function gotoManage(data: any) {
       </div>
     </main>
   </div>
+  <CommonDrawer :visible="openDrawer" :drawer-size="DrawerSize.medium" title="Add Users" show-footer submit-label="Add" @close="openDrawer = false" @submit="handleAddNewUsers">
+    <AddGroups is-in-drawer @items-selected="handleItemsSelected" />
+  </CommonDrawer>
 </template>
 
 <style lang="scss" scoped>
 :deep(.custom-bh-table) {
-  thead th {
+  thead th,
+  td {
     background-color: white;
+    border-bottom: 1px solid #e5e7eb;
   }
   &.hide-pagination {
     .bh-pagination {
       display: none;
     }
+  }
+  input[type='checkbox']:checked + div,
+  .bh-table-responsive input[type='checkbox']:indeterminate + div {
+    --tw-border-opacity: 1;
+    border-color: $brand;
+    --tw-bg-opacity: 1;
+    background-color: $brand;
   }
 }
 </style>

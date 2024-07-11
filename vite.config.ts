@@ -60,5 +60,15 @@ export default defineConfig({
       directoryAsNamespace: true,
       deep: true
     })
-  ]
+  ],
+  css: {
+    devSourcemap: true,
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+          @import "./src/styles/_partials/_variables.scss";
+        `
+      }
+    }
+  }
 });

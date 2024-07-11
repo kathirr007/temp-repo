@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
+import { Icon } from '@iconify/vue';
+import { ref } from 'vue';
 
-const isOpen = ref(true)
+const isOpen = ref(true);
 
 function toggleOpen() {
-  isOpen.value = !isOpen.value
+  isOpen.value = !isOpen.value;
 }
 </script>
 
@@ -19,8 +19,8 @@ function toggleOpen() {
         </span>
       </div>
     </div>
-    <transition name="fade" mode="out-in">
-      <div v-if="isOpen" class="accordion__content">
+    <transition :name="isOpen ? 'slide-down' : 'fade'" mode="out-in">
+      <div v-show="isOpen" class="accordion__content">
         <slot name="body" />
       </div>
     </transition>

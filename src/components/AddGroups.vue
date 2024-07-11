@@ -2,6 +2,15 @@
 import { useQuery } from '@tanstack/vue-query';
 import { computed, ref } from 'vue';
 
+defineProps<{
+  showInheritFromPage?: boolean;
+  isInDrawer?: boolean;
+}>();
+
+const emits = defineEmits<{
+  (e: 'items-selected', value: Record<string, any>[]): void;
+}>();
+
 const searchTerm = ref('');
 const isConfirmDialog = ref(false);
 const selectedPage = ref();
@@ -70,10 +79,10 @@ async function handleConfirmCancel() {
   <div class="min-w-screen">
     <div class="space-y-3 mt-3 relative">
       <div class="flex-col sm:flex-row flex justify-between w-full items-center space-y-2 sm:space-y-0 sm:space-x-2">
-        <div class="w-full md:w-1/3 sm:w-80">
+        <div class="w-full" :class="{ 'md:w-1/3 sm:w-80': !isInDrawer }">
           <CommonMultiSelect
             v-model="selectedGroups" :options="userGroupsData || []" :multiple="true" :close-on-select="false" :clear-on-select="false"
-            :preserve-search="true" placeholder="Type to search groups..." label="displayName" track-by="displayName" select-label=""
+            :preserve-search="true" placeholder="Type to search..." label="displayName" track-by="displayName" select-label=""
             selected-label="" deselect-label="" class="select-groups-dropdown"
             :loading="loadingUserGroups || fetchingUserGroups"
             @search-change="onSearch"
@@ -105,7 +114,7 @@ async function handleConfirmCancel() {
             </template>
           </CommonMultiSelect>
         </div>
-        <div class="flex items-center">
+        <div v-if="showInheritFromPage" class="flex items-center">
           <label for="inheritFrom" class="mr-2">Inherit from</label>
           <CommonMultiSelect
             v-model="selectedPage"

@@ -13,6 +13,7 @@ declare module 'vue' {
     CommonConfirmDialog: typeof import('./components/common/ConfirmDialog.vue')['default']
     CommonDatatable: typeof import('./components/common/Datatable.vue')['default']
     CommonDialog: typeof import('./components/common/Dialog.vue')['default']
+    CommonDrawer: typeof import('./components/common/Drawer.vue')['default']
     CommonMultiSelect: typeof import('./components/common/MultiSelect.vue')['default']
     CommonPagination: typeof import('./components/common/Pagination.vue')['default']
     CustomTable: typeof import('./components/custom-table.vue')['default']

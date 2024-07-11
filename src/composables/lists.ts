@@ -1,6 +1,7 @@
 import type { MaybeRef } from 'vue';
 
 export function useListUtils(listCollection?: MaybeRef<Record<string, any>[]> | Record<string, any>[], searchField?: string) {
+  const emits = getCurrentInstance()!.emit;
   const searchTerm = ref('');
   const selectedItem = ref<Record<string, any>>();
   const selectedItems = ref<Record<string, any>[]>([]);
@@ -36,6 +37,12 @@ export function useListUtils(listCollection?: MaybeRef<Record<string, any>[]> | 
   function clearAll(searchParam?: string) {
     selectedItems.value = [];
   }
+
+  watchEffect(() => {
+    if (selectedItems.value) {
+      emits('items-selected', selectedItems.value);
+    }
+  });
 
   return {
     searchTerm,
