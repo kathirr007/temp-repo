@@ -17,6 +17,18 @@ const cols = ref([
 const selectedGroups = ref<Record<string, any>[]>([]);
 const selectedNewGroups = ref<Record<string, any>[]>([]);
 const openDrawer = ref(false);
+const isLoading = ref(false);
+
+const drawerOptions = ref({
+  visible: computed(() => !!openDrawer.value),
+  drawerSize: DrawerSize.medium,
+  title: 'Add Users',
+  showFooter: true,
+  submitLabel: 'Add',
+  onClose: () => openDrawer.value = false,
+  onSubmit: handleAddNewUsers,
+  loading: computed(() => !!isLoading.value)
+});
 
 // const queryClient = useQueryClient();
 const { getPages } = usePagePermissions(true);
@@ -72,7 +84,13 @@ function handleItemsSelected(groups: Record<string, any>[]) {
 }
 
 function handleAddNewUsers() {
+  isLoading.value = true;
+  // TODO: remove once actual api integrated
   console.log(selectedNewGroups.value);
+  useTimeoutFn(() => {
+    isLoading.value = false;
+    openDrawer.value = false;
+  }, 1000);
 }
 </script>
 
@@ -144,7 +162,7 @@ function handleAddNewUsers() {
       </div>
     </main>
   </div>
-  <CommonDrawer :visible="openDrawer" :drawer-size="DrawerSize.medium" title="Add Users" show-footer submit-label="Add" @close="openDrawer = false" @submit="handleAddNewUsers">
+  <CommonDrawer v-bind="{ ...drawerOptions }">
     <AddGroups is-in-drawer @items-selected="handleItemsSelected" />
   </CommonDrawer>
 </template>
